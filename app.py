@@ -1,11 +1,30 @@
 # uvicorn app:app --reload
 from fastapi import FastAPI, status, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List
+
+from sqlalchemy import desc, asc
+
 from database import SessionLocal
 import models
 
 app = FastAPI()
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 db = SessionLocal()
 
 
@@ -20,7 +39,7 @@ class Item(BaseModel):
         orm_mode = True
 
 
-@app.get('/items', response_model=List[Item], status_code=200)
+@app.get('/items', response_model=List[Item], status_code=200, name='Получение всех записей')
 def get_all_items():
     items = db.query(models.Item).all()
     return items
@@ -77,27 +96,14 @@ def delete_item_by_id(item_id: int):
 
     return item_to_delete
 
-# @app.get('/')
-# def index():
-#     return {'yyy': '9999'}
-#
-#
-# @app.get('/greet/{name}')
-# def greet_name(name: str):
-#     return {'title': f'hello {name}'}
-#
-#
-# @app.get('/greet')
-# def great_optional_name(name: Optional[str] = 'user'):
-#     return {'message': f'hello {name}'}
-#
-#
-# @app.put('/item/{item_id}')
-# def update_item(item_id: int, item: Item):
-#     return {
-#         'id': item_id,
-#         'name': item.name,
-#         'descr': item.descr,
-#         'price': item.price,
-#         'on_offer': item.on_offer,
-#     }
+
+@app.get('/sort')
+def sort_items(order_by: str = None, order_direction: str = None):
+    if order_direction is None:
+        items = db.query(models.Item).order_by(order_by).all()
+    if order_direction == 'asc':
+        items = db.query(models.Item).order_by(asc(order_by)).all()
+    if order_direction == 'desc':
+        items = db.query(models.Item).order_by(desc(order_by)).all()
+    return items
+
