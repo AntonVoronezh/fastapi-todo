@@ -11,8 +11,6 @@ import models
 
 app = FastAPI()
 origins = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
     "http://localhost",
     "http://localhost:8080",
 ]
@@ -107,3 +105,11 @@ def sort_items(order_by: str = None, order_direction: str = None):
         items = db.query(models.Item).order_by(desc(order_by)).all()
     return items
 
+
+@app.get('/search')
+def items_search(q: str or int = None):
+    if q is None:
+        items = db.query(models.Item).all()
+    else:
+        items = db.query(models.Item).filter(models.Item.name.like(f'%{q}%')).all()
+    return items
