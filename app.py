@@ -37,6 +37,14 @@ class Item(BaseModel):
         orm_mode = True
 
 
+class Tag(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
 @app.get('/items', response_model=List[Item], status_code=200, name='Получение всех записей')
 def get_all_items():
     items = db.query(models.Item).all()
@@ -113,3 +121,15 @@ def items_search(q: str or int = None):
     else:
         items = db.query(models.Item).filter(models.Item.name.like(f'%{q}%')).all()
     return items
+
+
+@app.get('/pagination')
+def get_pagination(skip: int = 1, limit: int = 1):
+    items = db.query(models.Item).offset(skip).limit(limit).all()
+    return items
+
+
+@app.get('/tags')
+def get_tags():
+    tags = db.query(models.Tag).all()
+    return tags
