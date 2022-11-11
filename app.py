@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List
 
-from sqlalchemy import desc, asc
+from sqlalchemy import desc, asc, select
 
 from database import SessionLocal
 import models
@@ -32,6 +32,7 @@ class Item(BaseModel):
     description: str
     price: int
     on_offer: bool
+    tags: List[int]
 
     class Config:
         orm_mode = True
@@ -133,3 +134,15 @@ def get_pagination(skip: int = 1, limit: int = 1):
 def get_tags():
     tags = db.query(models.Tag).all()
     return tags
+
+
+@app.get('/tags/filter/{tag_id}')
+def filter_tags(tag_id: int):
+    # tag = db.query(models.Item).filter(models.Item.tags.in_(tag_id)).first()
+    c = select(db.query(models.Item)).where(models.Item.tags.in_(tag_id))
+    # tag = db.query(models.Item).all()
+    s = select(c)
+    rs = db.query(models.Item).execute(c)
+    print(rs.fetchall())
+    return rs.fetchall()
+
