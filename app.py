@@ -2,11 +2,11 @@
 from fastapi import FastAPI, status, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import List
 
 from sqlalchemy import desc, asc, select
 
-from database import SessionLocal
+from db.database import SessionLocal
 import models
 
 app = FastAPI()
@@ -138,9 +138,9 @@ def get_tags():
 
 @app.get('/tags/filter/{tag_id}')
 def filter_tags(tag_id: int):
-    # tag = db.query(models.Item).filter(models.Item.tags.in_(tag_id)).first()
+    # tag = db.query(models2.Item).filter(models2.Item.tags.in_(tag_id)).first()
     c = select(db.query(models.Item)).where(models.Item.tags.in_(tag_id))
-    # tag = db.query(models.Item).all()
+    # tag = db.query(models2.Item).all()
     s = select(c)
     rs = db.query(models.Item).execute(c)
     print(rs.fetchall())

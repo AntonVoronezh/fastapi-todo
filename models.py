@@ -1,6 +1,6 @@
 from sqlalchemy.dialects.postgresql import ARRAY
 
-from database import Base
+from db.database import Base
 from sqlalchemy import String, Boolean, Integer, Column, Text
 
 
@@ -20,5 +20,6 @@ class Tag(Base):
     name = Column(String(255), nullable=False, unique=True)
 
 
-def __repr__(self: Item):
-    return f'<Item name = {self.name}, price = {self.price}, on_offer = {self.on_offer}>'
+
+
+
