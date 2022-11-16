@@ -1,6 +1,6 @@
 from db.database import Base, engine
 
-print('Creating db..')
 
-Base.metadata.create_all(engine)
-
+def create_db():
+    print('Creating db..')
+    Base.metadata.create_all(engine)
