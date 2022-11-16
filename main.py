@@ -5,6 +5,8 @@ from starlette.middleware.cors import CORSMiddleware
 from db.database import SessionLocal
 from modules.todo.controller.todo import todos_router
 
+# from modules.todo.controller.todo import todos_router
+
 app = FastAPI()
 
 origins = [
@@ -22,7 +24,12 @@ app.add_middleware(
 
 db = SessionLocal()
 
-for router in (
-        todos_router
+
+# @app.get('/')
+# def ggg():
+#     pass
+
+for r in (
+        todos_router,
 ):
-    app.include_router(router)
+    app.include_router(r)

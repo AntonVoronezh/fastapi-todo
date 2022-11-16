@@ -1,4 +1,8 @@
+# from fastapi_camelcase import CamelModel
+from pydantic import BaseModel
+
 from fastapi_camelcase import CamelModel
+
 
 from shared.enums.todos import TodoTypeEnum
 
@@ -11,6 +15,7 @@ from shared.enums.todos import TodoTypeEnum
 # priority = Column(enum_todo_type, comment="Тип записи")  TodoTypeEnum
 
 
+# class TodoBaseDto(BaseModel):
 class TodoBaseDto(CamelModel):
     name: str
     description: str
